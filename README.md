@@ -22,6 +22,7 @@ BERT-pretrain(title_train, pos, neg) + BERT-pretrained(title)*fine-tune
 采样方法：
 
 训练测试划分：分层抽样
+
 contrastive pair 采样：按照标签概率分布抽样tag，在tag内的样本中随机选择query和key_positive，随机在tag以外的标签中随机选择key_negative
 
 [NOTE] contrastive learning 需要在train上做采样，防止data leakage
