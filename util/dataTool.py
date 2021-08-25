@@ -98,7 +98,7 @@ class ContrastiveTitleDataset(Dataset):
         # 过滤测试集中的样本
         if sampling_range:
             sampling_range = set(sampling_range)
-            samples = [s for idx, s in enumerate(samples) if idx not in sampling_range]
+            samples = [s for idx, s in enumerate(samples) if idx in sampling_range]
 
         for idx, s in enumerate(samples):
 
