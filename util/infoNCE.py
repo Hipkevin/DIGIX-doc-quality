@@ -27,11 +27,15 @@ class UnsupervisedInfoNCELoss(nn.Module):
         return loss
 
 class SupervisedInfoNCELoss(nn.Module):
-    def __init__(self, taf=1.0):
+    def __init__(self, config):
         super(SupervisedInfoNCELoss, self).__init__()
 
+        self.device = config.device
+
         # /taf
-        self.taf = taf
+        self.taf = config.taf
+        self.cos = nn.CosineSimilarity(dim=-1)
+        self.loss_func = nn.CrossEntropyLoss()
 
     def forward(self, z, z_p, z_n):
         """
@@ -43,9 +47,12 @@ class SupervisedInfoNCELoss(nn.Module):
                     )
 
         """
-        p_dot = torch.exp(torch.sum(torch.mul(z, z_p), dim=1) / self.taf)
-        n_dot = torch.exp(torch.sum(torch.mul(z, z_n), dim=1) / self.taf)
+        p_sim = self.cos(z.unsqueeze(1), z_p.unsqueeze(0)) / self.taf
+        n_sim = self.cos(z.unsqueeze(1), z_n.unsqueeze(0)) / self.taf
 
-        loss = - torch.sum(torch.log(p_dot / torch.sum(p_dot + n_dot, dim=0)), dim=0)
+        cos_sim = torch.cat([p_sim, n_sim], dim=1)
+
+        label = torch.arange(cos_sim.size(0)).long().to(self.device)
+        loss = self.loss_func(cos_sim, label)
 
         return loss

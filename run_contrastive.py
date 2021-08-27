@@ -16,7 +16,7 @@ def pretrain(model, sampling_range, config):
     contrast_dataset = ContrastiveTitleDataset(config, sampling_range)
     contrast_loader = DataLoader(contrast_dataset, batch_size=config.pretrain_batch_size, shuffle=True)
 
-    contrastive_criterion = SupervisedInfoNCELoss(taf=config.taf).to(config.device)
+    contrastive_criterion = SupervisedInfoNCELoss(config)
     contrastive_optimizer = torch.optim.AdamW(params=model.parameters(),
                                               lr=config.pretrain_learning_rate,
                                               weight_decay=config.pretrain_weight_decay)

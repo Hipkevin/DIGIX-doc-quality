@@ -13,7 +13,7 @@ class Config:
         self.cv = 0.15
 
         # contrastive learning 预训练任务参数
-        self.pretrain_batch_size = 32
+        self.pretrain_batch_size = 64
         self.pretrain_epoch = 1
         self.pretrain_learning_rate = 5e-5
         self.pretrain_weight_decay = 1e-1
@@ -28,7 +28,7 @@ class Config:
         # infoNCE loss 控制数值稳定的变量
         self.taf = 1e3
 
-        self.batch_size = 32
+        self.batch_size = 64
         self.epoch_size = 1
 
         self.pad_size = 70
