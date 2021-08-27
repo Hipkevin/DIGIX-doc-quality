@@ -32,8 +32,11 @@ class SupervisedInfoNCELoss(nn.Module):
 
         self.device = config.device
 
+        # config.hard_negative_weight
+        self.weight = config.hard_negative_weight
         # /taf
         self.taf = config.taf
+
         self.cos = nn.CosineSimilarity(dim=-1)
         self.loss_func = nn.CrossEntropyLoss()
 
@@ -48,11 +51,18 @@ class SupervisedInfoNCELoss(nn.Module):
 
         """
         p_sim = self.cos(z.unsqueeze(1), z_p.unsqueeze(0)) / self.taf
+
         n_sim = self.cos(z.unsqueeze(1), z_n.unsqueeze(0)) / self.taf
 
         cos_sim = torch.cat([p_sim, n_sim], dim=1)
 
+        weights = torch.tensor(
+            [[0.0] * (cos_sim.size(-1) - n_sim.size(-1)) +
+             [0.0] * i + [self.weight] + [0.0] * (n_sim.size(-1) - i - 1)
+             for i in range(n_sim.size(-1))]
+        ).to(self.device)
+
         label = torch.arange(cos_sim.size(0)).long().to(self.device)
-        loss = self.loss_func(cos_sim, label)
+        loss = self.loss_func(cos_sim + weights, label)
 
         return loss

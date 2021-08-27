@@ -25,8 +25,10 @@ class Config:
         self.T_0 = 5
         self.T_multi = 2
 
-        # infoNCE loss 控制数值稳定的变量
+        # infoNCE loss temperature
         self.taf = 1e3
+        self.hard_negative_weight = 1
+        self.contrastive_dropout = 0.2
 
         self.batch_size = 64
         self.epoch_size = 1
